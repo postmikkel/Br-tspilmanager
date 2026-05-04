@@ -23,9 +23,11 @@ body {
   min-height: 100dvh; overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* NAV */
 .nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-  background: rgba(11,11,22,0.96); backdrop-filter: blur(16px);
+  background: rgba(11,11,22,0.97); backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--border);
   display: flex; padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -40,17 +42,23 @@ body {
   transition: color 0.15s;
 }
 .nav-btn.active { color: var(--accent); }
-.nav-icon { font-size: 20px; line-height: 1; }
+.nav-icon { font-size: 22px; line-height: 1; }
+
+/* PAGES */
 .page { display: none; min-height: 100dvh; padding-bottom: 80px; }
 .page.active { display: block; }
+
+/* HEADER */
 .page-header {
   position: sticky; top: 0; z-index: 10;
-  background: rgba(11,11,22,0.94); backdrop-filter: blur(14px);
+  background: rgba(11,11,22,0.95); backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border); padding: 14px 16px 12px;
 }
 .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; line-height: 1; }
 .page-subtitle { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* BUTTONS */
 .btn {
   border: none; border-radius: 10px; cursor: pointer;
   font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px;
@@ -61,6 +69,8 @@ body {
 .btn-accent { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 16px rgba(232,97,44,0.3); }
 .btn-ghost { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); }
 .btn-full { width: 100%; }
+
+/* SEARCH */
 .search-input {
   width: 100%; padding: 9px 14px;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
@@ -68,6 +78,8 @@ body {
   font-family: 'DM Sans', sans-serif; outline: none;
 }
 .search-input::placeholder { color: var(--muted); }
+
+/* GAME GRID */
 .game-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 10px; padding: 14px 12px;
@@ -85,27 +97,10 @@ body {
 .card-img img { width: 100%; height: 100%; object-fit: cover; }
 .card-img .ph { font-size: 38px; opacity: 0.2; }
 .card-name { padding: 7px 8px 9px; font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.box-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; border-radius: 6px;
-  font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: #fff; flex-shrink: 0;
-}
-.section-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.list-thumb {
-  width: 36px; height: 36px; border-radius: 8px; overflow: hidden;
-  background: #0d0d1a; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
-}
-.list-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.box-list-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; border-radius: 12px;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  margin-bottom: 8px; cursor: pointer; transition: background 0.15s;
-}
-.box-list-item:active { background: rgba(255,255,255,0.08); }
+
+/* MODAL */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.82);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   z-index: 100; display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.2s;
@@ -128,9 +123,11 @@ body {
 .btn-close {
   background: rgba(255,255,255,0.07); border: none; color: var(--text);
   width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .modal-body { padding: 16px 18px 20px; }
+
+/* FORM */
 .form-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px; }
 .form-input {
   width: 100%; padding: 11px 13px;
@@ -139,16 +136,18 @@ body {
   font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 14px;
 }
 .form-input:focus { border-color: rgba(232,97,44,0.5); }
+
+/* UPLOAD */
 .upload-drop {
   border: 2px dashed rgba(255,255,255,0.14); border-radius: 14px;
   padding: 28px 20px; text-align: center; cursor: pointer;
-  background: rgba(255,255,255,0.02); transition: border-color 0.2s, background 0.2s;
-  margin-bottom: 14px;
+  background: rgba(255,255,255,0.02); margin-bottom: 14px;
 }
-.upload-drop:active { border-color: var(--accent); background: rgba(232,97,44,0.05); }
+.upload-drop:active { border-color: var(--accent); }
 .upload-icon { font-size: 36px; margin-bottom: 10px; }
 .upload-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); }
 .upload-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
 .img-preview {
   width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
   background: #0d0d1a; margin-bottom: 14px;
@@ -161,17 +160,21 @@ body {
   background: rgba(0,0,0,0.7); border-radius: 8px;
   padding: 4px 10px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.8);
 }
+
+/* BATCH */
 .batch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-bottom: 14px; }
 .batch-item { position: relative; }
 .batch-img { width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #0d0d1a; }
 .batch-img img { width: 100%; height: 100%; object-fit: cover; }
 .batch-name { font-size: 9px; color: var(--muted); margin-top: 3px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .batch-del {
-  position: absolute; top: 3px; right: 3px; width: 18px; height: 18px;
+  position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
   border-radius: 50%; background: rgba(0,0,0,0.75); border: none;
-  color: #fff; font-size: 10px; cursor: pointer;
+  color: #fff; font-size: 11px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
+
+/* CHECK LIST */
 .check-item {
   display: flex; align-items: center; gap: 10px; padding: 9px 12px;
   border-radius: 10px; background: rgba(255,255,255,0.03);
@@ -182,7 +185,7 @@ body {
   width: 20px; height: 20px; border-radius: 5px;
   border: 1.5px solid rgba(255,255,255,0.2);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-size: 11px; transition: all 0.12s;
+  flex-shrink: 0; font-size: 11px;
 }
 .check-item.selected .check-box { background: var(--accent); border-color: var(--accent); }
 .check-thumb {
@@ -192,15 +195,59 @@ body {
 }
 .check-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .check-name { flex: 1; font-size: 13px; }
-.detail-hero { width: 100%; border-radius: 12px; overflow: hidden; background: #0d0d1a; margin-bottom: 14px; max-height: 200px; }
-.detail-hero img { width: 100%; height: 100%; object-fit: cover; }
+
+/* RADIO (box selector) */
+.radio-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  border-radius: 10px; background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); margin-bottom: 5px; cursor: pointer;
+}
+.radio-item.selected { background: rgba(232,97,44,0.1); border-color: rgba(232,97,44,0.35); }
+.radio-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.radio-dot::after { content:''; width:10px; height:10px; border-radius:50%; background:transparent; transition: background 0.1s; }
+.radio-item.selected .radio-dot { border-color: var(--accent); }
+.radio-item.selected .radio-dot::after { background: var(--accent); }
+
+/* BOX LIST */
+.box-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  margin-bottom: 8px; cursor: pointer; transition: background 0.15s;
+}
+.box-list-item:active { background: rgba(255,255,255,0.08); }
+.box-cover {
+  width: 52px; height: 52px; border-radius: 10px; overflow: hidden;
+  background: #0d0d1a; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.box-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+/* SECTION LABEL */
+.section-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+
+/* DIVIDER */
+.divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-text { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+
+/* EMPTY */
 .empty { text-align: center; padding: 50px 20px; color: rgba(255,255,255,0.22); }
 .empty-icon { font-size: 48px; margin-bottom: 12px; }
 .empty h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: rgba(255,255,255,0.3); }
 .empty p { font-size: 13px; }
-.divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
-.divider-line { flex: 1; height: 1px; background: var(--border); }
-.divider-text { font-size: 11px; color: var(--muted); }
+
+/* BOX IMAGE FULL */
+.box-image-full {
+  width: 100%; border-radius: 14px; overflow: hidden;
+  background: #0d0d1a; margin-bottom: 10px;
+}
+.box-image-full img { width: 100%; display: block; }
+
 @media (min-width: 500px) {
   .modal-overlay { align-items: center; padding: 20px; }
   .modal-sheet { border-radius: 20px; border: 1px solid var(--border); max-height: 88dvh; }
@@ -248,6 +295,24 @@ body {
   </button>
 </nav>
 
+<!-- MODAL: SPIL DETALJE -->
+<div class="modal-overlay" id="gameDetailModal" onclick="closeModal('gameDetailModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-drag"></div>
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="detailGameName"></div>
+        <div id="detailGameSub" style="font-size:12px;color:var(--muted);margin-top:3px"></div>
+      </div>
+      <button class="btn-close" onclick="closeModal('gameDetailModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="detailBoxImage"></div>
+      <div id="detailLabel" style="text-align:center;font-size:12px;color:var(--muted);margin-top:-6px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: TILFØJ SPIL -->
 <div class="modal-overlay" id="addGameModal" onclick="closeModal('addGameModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -257,13 +322,13 @@ body {
       <button class="btn-close" onclick="closeModal('addGameModal')">✕</button>
     </div>
     <div class="modal-body">
-      <!-- Single -->
-      <div class="upload-drop" id="singleDrop" onclick="document.getElementById('singleFileInput').click()">
+      <div class="upload-drop" onclick="document.getElementById('singleFileInput').click()">
         <div class="upload-icon">📷</div>
-        <div class="upload-text">Vælg billede fra galleri</div>
-        <div class="upload-sub">Ét spil ad gangen</div>
+        <div class="upload-text">Vælg ét billede fra galleri</div>
+        <div class="upload-sub">Filnavnet bruges som spillets navn</div>
       </div>
       <input type="file" id="singleFileInput" accept="image/*" style="display:none" onchange="handleSingleFile(event)">
+
       <div id="singlePreview" style="display:none">
         <div class="img-preview" onclick="document.getElementById('singleFileInput').click()">
           <img id="singlePreviewImg" src="" alt="">
@@ -282,10 +347,11 @@ body {
 
       <div class="upload-drop" onclick="document.getElementById('batchFileInput').click()">
         <div class="upload-icon">🖼️</div>
-        <div class="upload-text">Vælg flere billeder</div>
+        <div class="upload-text">Vælg flere billeder på én gang</div>
         <div class="upload-sub">Filnavnene bliver spillenes navne</div>
       </div>
       <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none" onchange="handleBatchFiles(event)">
+
       <div id="batchPreview" style="display:none">
         <div class="batch-grid" id="batchGrid"></div>
         <button class="btn btn-accent btn-full" onclick="submitBatchGames()">Tilføj alle spil</button>
@@ -294,43 +360,47 @@ body {
   </div>
 </div>
 
-<!-- MODAL: SPIL DETALJE -->
-<div class="modal-overlay" id="gameDetailModal" onclick="closeModal('gameDetailModal')">
+<!-- MODAL: NY / REDIGER ÆSKE -->
+<!-- Step 1: vælg æskespil -->
+<div class="modal-overlay" id="newBoxStep1Modal" onclick="closeModal('newBoxStep1Modal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-drag"></div>
     <div class="modal-head">
       <div>
-        <div class="modal-title" id="detailGameName"></div>
-        <div id="detailBoxInfo" style="font-size:12px;color:var(--muted);margin-top:3px"></div>
+        <div class="modal-title" id="newBoxStep1Title">Ny æske – trin 1</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">Vælg det spil der er æsken</div>
       </div>
-      <button class="btn-close" onclick="closeModal('gameDetailModal')">✕</button>
+      <button class="btn-close" onclick="closeModal('newBoxStep1Modal')">✕</button>
     </div>
-    <div id="detailBoxBanner"></div>
     <div class="modal-body">
-      <div id="detailHero"></div>
-      <div id="detailBoxContents"></div>
-      <div id="detailNoBox" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:13px">
-        Dette spil er ikke tilknyttet en æske.<br>
-        <span style="font-size:11px;color:rgba(255,255,255,0.2)">Gå til Æsker-fanen for at tilknytte det.</span>
-      </div>
+      <input class="search-input" type="search" placeholder="Søg spil…" id="boxStep1Search" oninput="renderStep1()" style="margin-bottom:10px">
+      <div id="boxStep1List" style="max-height:400px;overflow-y:auto"></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: NY / REDIGER ÆSKE -->
-<div class="modal-overlay" id="newBoxModal" onclick="closeModal('newBoxModal')">
+<!-- Step 2: vælg gæstespil -->
+<div class="modal-overlay" id="newBoxStep2Modal" onclick="closeModal('newBoxStep2Modal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-drag"></div>
     <div class="modal-head">
-      <div class="modal-title" id="newBoxTitle">Ny æske</div>
-      <button class="btn-close" onclick="closeModal('newBoxModal')">✕</button>
+      <div>
+        <div class="modal-title" id="newBoxStep2Title">Ny æske – trin 2</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">Vælg hvilke spil der ligger i æsken</div>
+      </div>
+      <button class="btn-close" onclick="closeModal('newBoxStep2Modal')">✕</button>
     </div>
     <div class="modal-body">
-      <label class="form-label">Æskens navn (valgfrit)</label>
-      <input class="form-input" type="text" id="newBoxName" placeholder="f.eks. Æske 1">
-      <div class="section-label" style="margin-bottom:8px">Vælg spil der er i denne æske</div>
-      <input class="search-input" type="search" placeholder="Søg spil…" id="boxGameSearch" oninput="renderBoxGamePicker()" style="margin-bottom:10px">
-      <div id="boxGamePicker" style="max-height:320px;overflow-y:auto"></div>
+      <!-- æske preview -->
+      <div id="step2BoxPreview" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(232,97,44,0.1);border:1px solid rgba(232,97,44,0.3);margin-bottom:14px">
+        <div style="width:40px;height:40px;border-radius:8px;overflow:hidden;background:#0d0d1a;flex-shrink:0;display:flex;align-items:center;justify-content:center" id="step2BoxThumb"></div>
+        <div>
+          <div style="font-size:13px;font-weight:700" id="step2BoxName"></div>
+          <div style="font-size:11px;color:var(--muted)">er æsken</div>
+        </div>
+      </div>
+      <input class="search-input" type="search" placeholder="Søg spil…" id="boxStep2Search" oninput="renderStep2()" style="margin-bottom:10px">
+      <div id="boxStep2List" style="max-height:320px;overflow-y:auto"></div>
       <button class="btn btn-accent btn-full" style="margin-top:14px" onclick="submitBox()">Gem æske</button>
     </div>
   </div>
@@ -355,46 +425,72 @@ body {
 </div>
 
 <script>
-const BOX_COLORS = ['#E8612C','#2C7BE8','#2CE87A','#E8C12C','#C12CE8','#2CE8D4','#E82C6A','#7BE82C'];
-function boxColor(n) { return BOX_COLORS[(n-1) % BOX_COLORS.length]; }
-
+// ── DATA ──
 let games = [];
-let boxes = [];
+let boxes = []; // {id, boxGameId, guestGameIds:[]}
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('braetspil', 2);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('data')) d.createObjectStore('data');
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = () => reject(req.error);
+  });
+}
 
 function loadData() {
-  try {
-    const raw = localStorage.getItem('braetspil-v3');
-    if (raw) { const d = JSON.parse(raw); games = d.games||[]; boxes = d.boxes||[]; }
-  } catch {}
-}
-function saveData() {
-  try { localStorage.setItem('braetspil-v3', JSON.stringify({games, boxes})); } catch {}
+  return new Promise(resolve => {
+    openDB().then(d => {
+      db = d;
+      const tx = db.transaction('data','readonly');
+      const req = tx.objectStore('data').get('state');
+      req.onsuccess = () => {
+        const val = req.result;
+        if (val) { games = val.games||[]; boxes = val.boxes||[]; }
+        resolve();
+      };
+      req.onerror = () => resolve();
+    }).catch(() => resolve());
+  });
 }
 
-// ── NAVIGATION ──
+function saveData() {
+  if (db) {
+    try {
+      const tx = db.transaction('data','readwrite');
+      tx.objectStore('data').put({games, boxes}, 'state');
+    } catch(e) { console.error(e); }
+  }
+}
+
+// ── NAV ──
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'games') renderGames();
-  if (name === 'boxes') renderBoxes();
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if (name==='games') renderGames();
+  if (name==='boxes') renderBoxes();
 }
 
 // ── GAMES ──
 function renderGames() {
-  const q = (document.getElementById('gamesSearch').value || '').toLowerCase();
-  const filtered = [...games].filter(g => g.name.toLowerCase().includes(q))
-    .sort((a,b) => a.name.localeCompare(b.name,'da'));
+  const q = (document.getElementById('gamesSearch').value||'').toLowerCase();
+  const filtered = [...games].filter(g=>g.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
   document.getElementById('games-subtitle').textContent = `${games.length} spil`;
   const c = document.getElementById('gamesGrid');
-  if (filtered.length === 0) {
-    c.innerHTML = `<div class="empty"><div class="empty-icon">🎲</div>
+  if (filtered.length===0) {
+    c.innerHTML=`<div class="empty"><div class="empty-icon">🎲</div>
       <h3>${games.length===0?'Ingen spil endnu':'Ingen resultater'}</h3>
       <p>${games.length===0?'Tryk "+ Tilføj spil" for at starte':'Prøv en anden søgning'}</p></div>`;
     return;
   }
-  c.innerHTML = `<div class="game-grid">${filtered.map(g => `
+  c.innerHTML=`<div class="game-grid">${filtered.map(g=>`
     <div class="game-card" onclick="openGameDetail('${g.id}')">
       <div class="card-img">${g.imageData?`<img src="${g.imageData}" alt="${esc(g.name)}">`:'<div class="ph">🎲</div>'}</div>
       <div class="card-name">${esc(g.name)}</div>
@@ -402,46 +498,50 @@ function renderGames() {
 }
 
 // ── GAME DETAIL ──
+// Find the box game for a given game id
+function findBoxGame(gameId) {
+  // Is this game itself a box game?
+  const asBox = boxes.find(b => b.boxGameId === gameId);
+  if (asBox) {
+    return games.find(g => g.id === gameId); // returns itself
+  }
+  // Is it a guest in a box?
+  const asGuest = boxes.find(b => b.guestGameIds.includes(gameId));
+  if (asGuest) {
+    return games.find(g => g.id === asGuest.boxGameId);
+  }
+  return null;
+}
+
 function openGameDetail(id) {
-  const game = games.find(g => g.id === id);
+  const game = games.find(g=>g.id===id);
   if (!game) return;
-  const box = boxes.find(b => b.gameIds.includes(id));
-  const idx = box ? boxes.indexOf(box) + 1 : null;
-  const col = idx ? boxColor(idx) : null;
+
+  const boxGame = findBoxGame(id);
 
   document.getElementById('detailGameName').textContent = game.name;
-  document.getElementById('detailHero').innerHTML = game.imageData
-    ? `<div class="detail-hero"><img src="${game.imageData}" alt="${esc(game.name)}"></div>` : '';
 
-  if (box) {
-    document.getElementById('detailBoxInfo').textContent = `Pakket i ${box.name || 'Æske ' + idx}`;
-    document.getElementById('detailNoBox').style.display = 'none';
-    document.getElementById('detailBoxBanner').innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;background:${col}18;border-bottom:1px solid ${col}30">
-        <div class="box-badge" style="background:${col};width:38px;height:38px;font-size:20px;border-radius:9px">${idx}</div>
-        <div>
-          <div style="font-weight:700;font-size:15px">${esc(box.name||'Æske '+idx)}</div>
-          <div style="font-size:11px;color:var(--muted)">${box.gameIds.length} spil i denne æske</div>
-        </div>
-      </div>`;
-    const boxGames = box.gameIds.map(gid=>games.find(g=>g.id===gid)).filter(Boolean)
-      .sort((a,b)=>a.name.localeCompare(b.name,'da'));
-    document.getElementById('detailBoxContents').innerHTML =
-      `<div class="section-label" style="margin-bottom:8px">Indhold i æsken</div>` +
-      boxGames.map(g=>`
-        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;
-          background:${g.id===id?col+'18':'rgba(255,255,255,0.03)'};
-          border:1px solid ${g.id===id?col+'40':'transparent'};margin-bottom:5px">
-          <div class="list-thumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
-          <span style="font-size:13px;font-weight:${g.id===id?700:400};color:${g.id===id?'var(--text)':'rgba(255,255,255,0.75)'}">${esc(g.name)}</span>
-          ${g.id===id?`<span style="margin-left:auto;font-size:10px;color:${col}">← dette spil</span>`:''}
-        </div>`).join('');
+  if (boxGame) {
+    const isOwnBox = boxGame.id === id;
+    document.getElementById('detailGameSub').textContent = isOwnBox
+      ? 'Dette spil er æsken'
+      : `Ligger i ${boxGame.name}-æsken`;
+    document.getElementById('detailBoxImage').innerHTML = boxGame.imageData
+      ? `<div class="box-image-full"><img src="${boxGame.imageData}" alt="${esc(boxGame.name)}"></div>`
+      : `<div style="text-align:center;padding:30px;font-size:48px;opacity:0.2">📦</div>`;
+    document.getElementById('detailLabel').textContent = isOwnBox
+      ? ''
+      : `Se efter æsken med ${boxGame.name} på`;
   } else {
-    document.getElementById('detailBoxInfo').textContent = 'Ikke tilknyttet en æske';
-    document.getElementById('detailBoxBanner').innerHTML = '';
-    document.getElementById('detailBoxContents').innerHTML = '';
-    document.getElementById('detailNoBox').style.display = 'block';
+    document.getElementById('detailGameSub').textContent = 'Ikke tilknyttet en æske';
+    document.getElementById('detailBoxImage').innerHTML =
+      `<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">
+        Dette spil er ikke pakket ned i en æske endnu.<br>
+        <span style="font-size:11px;opacity:0.6">Gå til Æsker for at tilknytte det.</span>
+      </div>`;
+    document.getElementById('detailLabel').textContent = '';
   }
+
   openModal('gameDetailModal');
 }
 
@@ -495,7 +595,7 @@ function handleBatchFiles(e) {
     const reader = new FileReader();
     reader.onload = ev => {
       batchFiles.push({name:n, imageData:ev.target.result, idx:i});
-      if (++loaded === files.length) { batchFiles.sort((a,b)=>a.idx-b.idx); renderBatchGrid(); }
+      if (++loaded===files.length) { batchFiles.sort((a,b)=>a.idx-b.idx); renderBatchGrid(); }
     };
     reader.readAsDataURL(file);
   });
@@ -517,7 +617,7 @@ function removeBatchItem(i) {
 }
 
 function submitBatchGames() {
-  batchFiles.forEach(f => games.push({id:uid(), name:f.name, imageData:f.imageData}));
+  batchFiles.forEach(f=>games.push({id:uid(), name:f.name, imageData:f.imageData}));
   saveData(); renderGames(); closeModal('addGameModal');
 }
 
@@ -525,66 +625,90 @@ function submitBatchGames() {
 function renderBoxes() {
   document.getElementById('boxes-subtitle').textContent = `${boxes.length} æsker`;
   const c = document.getElementById('boxesList');
-  if (boxes.length === 0) {
-    c.innerHTML = `<div class="empty"><div class="empty-icon">📦</div>
+  if (boxes.length===0) {
+    c.innerHTML=`<div class="empty"><div class="empty-icon">📦</div>
       <h3>Ingen æsker endnu</h3><p>Tryk "+ Ny æske" for at oprette din første æske</p></div>`;
     return;
   }
-  c.innerHTML = boxes.map((box,i) => {
-    const n = i+1, col = boxColor(n);
-    const thumbs = box.gameIds.slice(0,4).map(gid=>games.find(g=>g.id===gid)).filter(Boolean);
+  c.innerHTML = boxes.map(box => {
+    const boxGame = games.find(g=>g.id===box.boxGameId);
+    const total = 1 + box.guestGameIds.length;
     return `<div class="box-list-item" onclick="openBoxDetail('${box.id}')">
-      <div class="box-badge" style="background:${col};width:38px;height:38px;font-size:20px;border-radius:9px">${n}</div>
+      <div class="box-cover">${boxGame?.imageData?`<img src="${boxGame.imageData}" alt="">`:'📦'}</div>
       <div style="flex:1">
-        <div style="font-weight:700;font-size:15px">${esc(box.name||'Æske '+n)}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">${box.gameIds.length} spil</div>
+        <div style="font-weight:700;font-size:15px">${esc(boxGame?.name||'Ukendt æske')}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${total} spil</div>
       </div>
-      <div style="display:flex;gap:3px">
-        ${thumbs.map(g=>`<div style="width:28px;height:28px;border-radius:6px;overflow:hidden;background:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:12px">
-          ${g.imageData?`<img src="${g.imageData}" style="width:100%;height:100%;object-fit:cover">`:'🎲'}</div>`).join('')}
-      </div>
-      <span style="color:var(--muted);font-size:18px;margin-left:4px">›</span>
+      <span style="color:var(--muted);font-size:20px">›</span>
     </div>`;
   }).join('');
 }
 
-// ── NEW / EDIT BOX ──
+// ── NEW BOX – step 1 ──
 let editingBoxId = null;
-let selectedGameIds = new Set();
+let newBoxGameId = null;
+let newGuestIds = new Set();
 
 function openNewBox() {
-  editingBoxId = null; selectedGameIds = new Set();
-  document.getElementById('newBoxName').value = '';
-  document.getElementById('boxGameSearch').value = '';
-  document.getElementById('newBoxTitle').textContent = 'Ny æske';
-  renderBoxGamePicker();
-  openModal('newBoxModal');
+  editingBoxId = null; newBoxGameId = null; newGuestIds = new Set();
+  document.getElementById('newBoxStep1Title').textContent = 'Ny æske – trin 1';
+  document.getElementById('boxStep1Search').value = '';
+  renderStep1();
+  openModal('newBoxStep1Modal');
 }
 
-function editCurrentBox() {
-  closeModal('boxDetailModal');
-  const box = boxes.find(b=>b.id===editingBoxId); if (!box) return;
-  selectedGameIds = new Set(box.gameIds);
-  document.getElementById('newBoxName').value = box.name||'';
-  document.getElementById('boxGameSearch').value = '';
-  document.getElementById('newBoxTitle').textContent = 'Rediger æske';
-  renderBoxGamePicker();
-  openModal('newBoxModal');
-}
-
-function renderBoxGamePicker() {
-  const q = (document.getElementById('boxGameSearch').value||'').toLowerCase();
+function renderStep1() {
+  const q = (document.getElementById('boxStep1Search').value||'').toLowerCase();
   const filtered = [...games].filter(g=>g.name.toLowerCase().includes(q))
     .sort((a,b)=>a.name.localeCompare(b.name,'da'));
   if (filtered.length===0) {
-    document.getElementById('boxGamePicker').innerHTML =
+    document.getElementById('boxStep1List').innerHTML=
       `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">
         ${games.length===0?'Tilføj spil under "Spil"-fanen først':'Ingen spil fundet'}</div>`;
     return;
   }
-  document.getElementById('boxGamePicker').innerHTML = filtered.map(g=>{
-    const sel = selectedGameIds.has(g.id);
-    return `<div class="check-item ${sel?'selected':''}" onclick="toggleBoxGame('${g.id}')">
+  document.getElementById('boxStep1List').innerHTML = filtered.map(g=>`
+    <div class="radio-item ${newBoxGameId===g.id?'selected':''}" onclick="selectBoxGame('${g.id}')">
+      <div class="radio-dot"></div>
+      <div class="check-thumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
+      <span class="check-name">${esc(g.name)}</span>
+    </div>`).join('');
+}
+
+function selectBoxGame(id) {
+  newBoxGameId = id;
+  // pre-remove this game from guest list
+  newGuestIds.delete(id);
+  // go to step 2
+  closeModal('newBoxStep1Modal');
+  openStep2();
+}
+
+function openStep2() {
+  const boxGame = games.find(g=>g.id===newBoxGameId);
+  document.getElementById('newBoxStep2Title').textContent = editingBoxId ? 'Rediger æske – trin 2' : 'Ny æske – trin 2';
+  document.getElementById('step2BoxName').textContent = boxGame?.name||'';
+  document.getElementById('step2BoxThumb').innerHTML = boxGame?.imageData
+    ? `<img src="${boxGame.imageData}" style="width:100%;height:100%;object-fit:cover">` : '📦';
+  document.getElementById('boxStep2Search').value = '';
+  renderStep2();
+  openModal('newBoxStep2Modal');
+}
+
+function renderStep2() {
+  const q = (document.getElementById('boxStep2Search').value||'').toLowerCase();
+  // all games except the box game itself
+  const filtered = [...games]
+    .filter(g=>g.id!==newBoxGameId && g.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
+  if (filtered.length===0) {
+    document.getElementById('boxStep2List').innerHTML=
+      `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Ingen andre spil at vælge</div>`;
+    return;
+  }
+  document.getElementById('boxStep2List').innerHTML = filtered.map(g=>{
+    const sel = newGuestIds.has(g.id);
+    return `<div class="check-item ${sel?'selected':''}" onclick="toggleGuest('${g.id}')">
       <div class="check-box">${sel?'✓':''}</div>
       <div class="check-thumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
       <span class="check-name">${esc(g.name)}</span>
@@ -592,44 +716,72 @@ function renderBoxGamePicker() {
   }).join('');
 }
 
-function toggleBoxGame(id) {
-  selectedGameIds.has(id) ? selectedGameIds.delete(id) : selectedGameIds.add(id);
-  renderBoxGamePicker();
+function toggleGuest(id) {
+  newGuestIds.has(id) ? newGuestIds.delete(id) : newGuestIds.add(id);
+  renderStep2();
 }
 
 function submitBox() {
-  const name = document.getElementById('newBoxName').value.trim();
-  const gameIds = [...selectedGameIds];
-  // remove selected games from other boxes
-  boxes.forEach(b => { if (b.id!==editingBoxId) b.gameIds = b.gameIds.filter(id=>!gameIds.includes(id)); });
+  if (!newBoxGameId) return;
+  const guestIds = [...newGuestIds];
+
+  // Remove chosen games from any other box
+  boxes.forEach(b => {
+    if (b.id!==editingBoxId) {
+      if (b.boxGameId===newBoxGameId) b.boxGameId=null; // shouldn't happen
+      b.guestGameIds = b.guestGameIds.filter(id=>id!==newBoxGameId && !guestIds.includes(id));
+    }
+  });
+
   if (editingBoxId) {
     const box = boxes.find(b=>b.id===editingBoxId);
-    if (box) { box.name=name; box.gameIds=gameIds; }
+    if (box) { box.boxGameId=newBoxGameId; box.guestGameIds=guestIds; }
   } else {
-    if (gameIds.length > 0) boxes.push({id:uid(), name, gameIds});
+    boxes.push({id:uid(), boxGameId:newBoxGameId, guestGameIds:guestIds});
   }
-  boxes = boxes.filter(b=>b.gameIds.length>0);
-  saveData(); renderBoxes(); closeModal('newBoxModal');
+
+  // remove boxes with no boxGameId
+  boxes = boxes.filter(b=>b.boxGameId);
+
+  saveData(); renderBoxes(); closeModal('newBoxStep2Modal');
 }
 
 // ── BOX DETAIL ──
 function openBoxDetail(boxId) {
   editingBoxId = boxId;
   const box = boxes.find(b=>b.id===boxId); if (!box) return;
-  const idx = boxes.indexOf(box)+1, col = boxColor(idx);
-  const boxGames = box.gameIds.map(gid=>games.find(g=>g.id===gid)).filter(Boolean)
+  const boxGame = games.find(g=>g.id===box.boxGameId);
+  const allGameIds = [box.boxGameId, ...box.guestGameIds];
+  const allGames = allGameIds.map(id=>games.find(g=>g.id===id)).filter(Boolean)
     .sort((a,b)=>a.name.localeCompare(b.name,'da'));
-  document.getElementById('boxDetailName').textContent = box.name||'Æske '+idx;
-  document.getElementById('boxDetailCount').textContent = `${boxGames.length} spil`;
-  document.getElementById('boxDetailBody').innerHTML = boxGames.length===0
-    ? '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Ingen spil i denne æske</div>'
-    : boxGames.map(g=>`
+
+  document.getElementById('boxDetailName').textContent = boxGame?.name||'Æske';
+  document.getElementById('boxDetailCount').textContent = `${allGames.length} spil i æsken`;
+
+  document.getElementById('boxDetailBody').innerHTML =
+    (boxGame?.imageData ? `<div class="box-image-full" style="margin-bottom:16px"><img src="${boxGame.imageData}" alt="${esc(boxGame?.name||'')}"></div>` : '') +
+    `<div class="section-label">Spil i æsken</div>` +
+    allGames.map(g=>`
       <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
-        background:rgba(255,255,255,0.04);border:1px solid var(--border);margin-bottom:6px">
-        <div class="list-thumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
-        <span style="font-size:13px;flex:1">${esc(g.name)}</span>
+        background:${g.id===box.boxGameId?'rgba(232,97,44,0.1)':'rgba(255,255,255,0.04)'};
+        border:1px solid ${g.id===box.boxGameId?'rgba(232,97,44,0.35)':'var(--border)'};margin-bottom:5px">
+        <div class="check-thumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
+        <span style="font-size:13px;flex:1;font-weight:${g.id===box.boxGameId?700:400}">${esc(g.name)}</span>
+        ${g.id===box.boxGameId?'<span style="font-size:10px;color:var(--accent)">æske</span>':''}
       </div>`).join('');
+
   openModal('boxDetailModal');
+}
+
+function editCurrentBox() {
+  const box = boxes.find(b=>b.id===editingBoxId); if (!box) return;
+  newBoxGameId = box.boxGameId;
+  newGuestIds = new Set(box.guestGameIds);
+  closeModal('boxDetailModal');
+  document.getElementById('newBoxStep1Title').textContent = 'Rediger æske – trin 1';
+  document.getElementById('boxStep1Search').value = '';
+  renderStep1();
+  openModal('newBoxStep1Modal');
 }
 
 // ── HELPERS ──
@@ -638,8 +790,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function uid() { return Math.random().toString(36).slice(2)+Date.now().toString(36); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-loadData();
-renderGames();
+loadData().then(()=>renderGames());
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
