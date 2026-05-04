@@ -1,8 +1,10 @@
-const CACHE = 'braetspil-v1';
+const CACHE = 'braetspil-v4';
 const ASSETS = ['./index.html', './manifest.json', './sw.js'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
@@ -17,6 +19,10 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    fetch(e.request).then(response => {
+      const clone = response.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return response;
+    }).catch(() => caches.match(e.request))
   );
 });
