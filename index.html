@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brætspil">
+<meta name="theme-color" content="#0b0b16">
+<link rel="manifest" href="manifest.json">
+<title>Brætspil Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #0b0b16;
+    --surface: #13131f;
+    --surface2: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0fa;
+    --muted: rgba(255,255,255,0.4);
+    --accent: #E8612C;
+    --accent2: #E8912C;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(11,11,22,0.93);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px;
+  }
+  .header-top {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 12px;
+  }
+  .app-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 2px;
+    line-height: 1; color: var(--text);
+  }
+  .app-subtitle {
+    font-size: 11px; color: var(--muted); margin-top: 3px;
+  }
+  .header-btns { display: flex; gap: 8px; }
+
+  .btn {
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    font-size: 13px; padding: 8px 13px;
+    transition: opacity 0.15s, transform 0.1s;
+    display: flex; align-items: center; gap: 5px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.75);
+  }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(232,97,44,0.35);
+  }
+
+  .search-input {
+    width: 100%; padding: 9px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; color: var(--text);
+    font-size: 15px; font-family: 'DM Sans', sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: rgba(232,97,44,0.5); }
+  .search-input::placeholder { color: var(--muted); }
+
+  /* GRID */
+  .grid-container {
+    max-width: 600px; margin: 0 auto;
+    padding: 16px 12px 100px;
+  }
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .game-card {
+    cursor: pointer; border-radius: 12px; overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border);
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .game-card:active { transform: scale(0.96); }
+
+  .card-img {
+    aspect-ratio: 3/4; overflow: hidden;
+    background: #0d0d1a;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .card-img .placeholder { font-size: 40px; opacity: 0.25; }
+
+  .card-body { padding: 7px 9px 9px; }
+  .card-name {
+    font-size: 12px; font-weight: 700; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-box-row {
+    display: flex; align-items: center; gap: 5px; margin-top: 4px;
+  }
+  .box-badge {
+    width: 22px; height: 22px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 11px; color: #fff;
+    font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .card-box-label { font-size: 10px; color: var(--muted); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: rgba(255,255,255,0.25);
+  }
+  .empty-state .icon { font-size: 52px; margin-bottom: 14px; }
+  .empty-state h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; opacity: 0.7; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .modal-overlay.open {
+    opacity: 1; pointer-events: all;
+  }
+  .modal-sheet {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 560px;
+    max-height: 90dvh; overflow-y: auto;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+    transform: translateY(30px);
+    transition: transform 0.22s;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+  .modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+  .modal-drag { width: 36px; height: 4px; background: rgba(255,255,255,0.15);
+    border-radius: 2px; margin: 10px auto 0; }
+  .modal-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    padding: 14px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 1px; color: var(--text);
+    line-height: 1.1;
+  }
+  .modal-subtitle { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .btn-close {
+    background: rgba(255,255,255,0.07); border: none;
+    color: var(--text); width: 30px; height: 30px;
+    border-radius: 8px; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+  }
+  .modal-body { padding: 16px 18px 20px; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  /* BOX LIST */
+  .box-game-list { display: flex; flex-direction: column; gap: 5px; }
+  .box-game-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .box-game-item.active { border-color: rgba(232,97,44,0.4); background: rgba(232,97,44,0.1); }
+  .box-game-thumb {
+    width: 30px; height: 30px; border-radius: 6px;
+    overflow: hidden; background: #0d0d1a; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .box-game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .box-game-name { font-size: 13px; flex: 1; color: rgba(255,255,255,0.8); }
+  .box-game-name.active { color: var(--text); font-weight: 700; }
+  .active-tag { font-size: 10px; color: var(--accent); margin-left: auto; }
+
+  /* BOX BUTTONS */
+  .box-btn-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+  .box-btn {
+    padding: 6px 13px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6);
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+  }
+  .box-btn.active {
+    background: rgba(232,97,44,0.18);
+    border-color: var(--accent); color: var(--accent);
+  }
+  .box-btn-new {
+    border-style: dashed; color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ADD FORM */
+  .img-upload-area {
+    width: 100%; aspect-ratio: 4/3; border-radius: 12px;
+    border: 2px dashed rgba(255,255,255,0.13);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; margin-bottom: 14px; overflow: hidden;
+    background: rgba(255,255,255,0.03);
+    transition: border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .img-upload-area:active { border-color: rgba(232,97,44,0.5); }
+  .img-upload-area img { width: 100%; height: 100%; object-fit: cover; }
+  .img-upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .img-upload-text { font-size: 13px; color: var(--muted); }
+
+  .form-label {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    display: block; margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%; padding: 10px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px; color: var(--text);
+    font-size: 15px; font-family: 'DM Sans', sans-serif;
+    outline: none; margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: rgba(232,97,44,0.5); }
+
+  .btn-full {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 12px; color: #fff;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; letter-spacing: 0.5px;
+    margin-top: 6px; transition: opacity 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-full:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-full:disabled {
+    background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.3);
+    cursor: default;
+  }
+
+  /* MANAGE */
+  .manage-box-section { margin-bottom: 22px; }
+  .manage-box-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .manage-box-title { font-size: 14px; font-weight: 700; }
+  .manage-box-count { font-size: 11px; color: var(--muted); }
+
+  .manage-game-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 5px;
+  }
+  .manage-game-thumb {
+    width: 28px; height: 28px; border-radius: 6px;
+    overflow: hidden; background: #0d0d1a; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+  .manage-game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .manage-game-name { flex: 1; font-size: 13px; color: rgba(255,255,255,0.8); }
+  .manage-select {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 7px; color: var(--text);
+    font-size: 11px; padding: 4px 6px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-del {
+    background: rgba(232,44,106,0.12);
+    border: 1px solid rgba(232,44,106,0.28);
+    border-radius: 7px; color: #E82C6A;
+    cursor: pointer; width: 26px; height: 26px;
+    font-size: 13px; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* GAME DETAIL HERO */
+  .detail-hero {
+    width: 100%; max-height: 220px; overflow: hidden;
+    border-radius: 12px; margin-bottom: 14px;
+  }
+  .detail-hero img { width: 100%; height: 100%; object-fit: cover; }
+
+  @media (min-width: 480px) {
+    .modal-overlay { align-items: center; padding: 20px; }
+    .modal-sheet { border-radius: 20px; border: 1px solid var(--border); max-height: 88vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div style="max-width:600px;margin:0 auto">
+    <div class="header-top">
+      <div>
+        <div class="app-title">🎲 Brætspil</div>
+        <div class="app-subtitle" id="subtitle">0 spil · 0 æsker</div>
+      </div>
+      <div class="header-btns">
+        <button class="btn btn-ghost" onclick="openManage()">⚙️ Æsker</button>
+        <button class="btn btn-accent" onclick="openAdd()">+ Tilføj</button>
+      </div>
+    </div>
+    <input class="search-input" type="search" placeholder="Søg efter spil…" id="searchInput" oninput="renderGrid()">
+  </div>
+</header>
+
+<!-- GRID -->
+<div class="grid-container">
+  <div class="game-grid" id="gameGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="icon">🎲</div>
+    <h3 id="emptyTitle">Ingen spil endnu</h3>
+    <p id="emptyMsg">Tryk + Tilføj for at komme i gang</p>
+  </div>
+</div>
+
+<!-- MODAL: GAME DETAIL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal('detailModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="detailName"></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-top:5px">
+          <div class="box-badge" id="detailBoxBadge"></div>
+          <span class="modal-subtitle" id="detailBoxLabel"></span>
+        </div>
+      </div>
+      <button class="btn-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="detailHero"></div>
+      <div class="section-label" id="detailBoxContentsLabel"></div>
+      <div class="box-game-list" id="detailBoxContents"></div>
+      <div style="margin-top:18px">
+        <div class="section-label">Flyt til anden æske</div>
+        <div class="box-btn-row" id="detailMoveButtons"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD GAME -->
+<div class="modal-overlay" id="addModal" onclick="closeModal('addModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title">Tilføj spil</div>
+      <button class="btn-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="img-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <div class="img-upload-icon">📷</div>
+        <div class="img-upload-text">Tryk for at tage billede</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event)">
+
+      <label class="form-label">Spillets navn</label>
+      <input class="form-input" type="text" id="addName" placeholder="f.eks. Catan">
+
+      <div class="section-label" style="margin-bottom:8px">Pakket i æske</div>
+      <div class="box-btn-row" id="addBoxButtons"></div>
+
+      <button class="btn-full" id="addSubmitBtn" onclick="submitAdd()">Tilføj spil</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MANAGE BOXES -->
+<div class="modal-overlay" id="manageModal" onclick="closeModal('manageModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title">Administrer æsker</div>
+      <button class="btn-close" onclick="closeModal('manageModal')">✕</button>
+    </div>
+    <div class="modal-body" id="manageBody"></div>
+  </div>
+</div>
+
+<script>
+const BOX_COLORS = [
+  '#E8612C','#2C7BE8','#2CE87A','#E8C12C','#C12CE8',
+  '#2CE8D4','#E82C6A','#7BE82C','#E8C87A','#7A2CE8'
+];
+
+function boxColor(n) { return BOX_COLORS[(n-1) % BOX_COLORS.length]; }
+
+// --- DATA ---
+let games = [];
+let addImageData = null;
+let addBoxSelected = 1;
+let currentDetailId = null;
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem('braetspil-v2');
+    if (raw) { const d = JSON.parse(raw); games = d.games || []; }
+  } catch {}
+}
+
+function saveData() {
+  try { localStorage.setItem('braetspil-v2', JSON.stringify({ games })); } catch {}
+}
+
+function allBoxNumbers() {
+  const s = new Set(games.map(g => g.boxNumber));
+  return [...s].sort((a,b)=>a-b);
+}
+
+// --- RENDER GRID ---
+function renderGrid() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = [...games]
+    .filter(g => g.name.toLowerCase().includes(q))
+    .sort((a,b) => a.name.localeCompare(b.name, 'da'));
+
+  const grid = document.getElementById('gameGrid');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    document.getElementById('emptyTitle').textContent = games.length === 0 ? 'Ingen spil endnu' : 'Ingen spil fundet';
+    document.getElementById('emptyMsg').textContent = games.length === 0 ? 'Tryk + Tilføj for at komme i gang' : 'Prøv en anden søgning';
+  } else {
+    grid.style.display = 'grid';
+    empty.style.display = 'none';
+    grid.innerHTML = filtered.map(g => {
+      const col = boxColor(g.boxNumber);
+      return `<div class="game-card" onclick="openDetail('${g.id}')">
+        <div class="card-img">
+          ${g.imageData
+            ? `<img src="${g.imageData}" alt="${esc(g.name)}">`
+            : `<div class="placeholder">🎲</div>`}
+        </div>
+        <div class="card-body">
+          <div class="card-name">${esc(g.name)}</div>
+          <div class="card-box-row">
+            <div class="box-badge" style="background:${col}">${g.boxNumber}</div>
+            <span class="card-box-label">Æske ${g.boxNumber}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // update subtitle
+  const boxes = allBoxNumbers();
+  document.getElementById('subtitle').textContent = `${games.length} spil · ${boxes.length} æsker`;
+}
+
+// --- DETAIL MODAL ---
+function openDetail(id) {
+  currentDetailId = id;
+  renderDetail();
+  openModal('detailModal');
+}
+
+function renderDetail() {
+  const game = games.find(g => g.id === currentDetailId);
+  if (!game) return;
+  const col = boxColor(game.boxNumber);
+  const boxGames = games.filter(g => g.boxNumber === game.boxNumber)
+    .sort((a,b) => a.name.localeCompare(b.name,'da'));
+
+  document.getElementById('detailName').textContent = game.name;
+  const badge = document.getElementById('detailBoxBadge');
+  badge.textContent = game.boxNumber;
+  badge.style.background = col;
+  document.getElementById('detailBoxLabel').textContent = `Pakket i Æske ${game.boxNumber}`;
+
+  // hero image
+  const hero = document.getElementById('detailHero');
+  hero.innerHTML = game.imageData
+    ? `<div class="detail-hero"><img src="${game.imageData}" alt="${esc(game.name)}"></div>`
+    : '';
+
+  // box contents
+  document.getElementById('detailBoxContentsLabel').textContent = `Æske ${game.boxNumber} indeholder`;
+  document.getElementById('detailBoxContents').innerHTML = boxGames.map(g => `
+    <div class="box-game-item ${g.id === game.id ? 'active' : ''}">
+      <div class="box-game-thumb">
+        ${g.imageData ? `<img src="${g.imageData}" alt="">` : '🎲'}
+      </div>
+      <span class="box-game-name ${g.id === game.id ? 'active' : ''}">${esc(g.name)}</span>
+      ${g.id === game.id ? '<span class="active-tag">← dette spil</span>' : ''}
+    </div>
+  `).join('');
+
+  // move buttons
+  const boxes = allBoxNumbers();
+  const maxBox = boxes.length > 0 ? Math.max(...boxes) : 1;
+  document.getElementById('detailMoveButtons').innerHTML =
+    boxes.map(b => `
+      <button class="box-btn ${b === game.boxNumber ? 'active' : ''}"
+        onclick="moveGame('${game.id}', ${b})" style="${b === game.boxNumber ? `border-color:${col};color:${col};background:${col}22` : ''}">
+        Æske ${b}
+      </button>
+    `).join('') +
+    `<button class="box-btn box-btn-new" onclick="moveGame('${game.id}', ${maxBox+1})">+ Ny æske</button>`;
+}
+
+function moveGame(id, newBox) {
+  const g = games.find(x => x.id === id);
+  if (g) { g.boxNumber = newBox; saveData(); renderDetail(); renderGrid(); }
+}
+
+// --- ADD MODAL ---
+function openAdd() {
+  addImageData = null;
+  addBoxSelected = allBoxNumbers().length > 0 ? Math.min(...allBoxNumbers()) : 1;
+  document.getElementById('addName').value = '';
+  document.getElementById('uploadArea').innerHTML = `
+    <div class="img-upload-icon">📷</div>
+    <div class="img-upload-text">Tryk for at tage billede eller vælg fra galleri</div>`;
+  renderAddBoxButtons();
+  openModal('addModal');
+}
+
+function renderAddBoxButtons() {
+  const boxes = allBoxNumbers();
+  const maxBox = boxes.length > 0 ? Math.max(...boxes) : 1;
+  const opts = boxes.length > 0 ? boxes : [1];
+  document.getElementById('addBoxButtons').innerHTML =
+    opts.map(b => `
+      <button class="box-btn ${b === addBoxSelected ? 'active' : ''}"
+        onclick="selectAddBox(${b})"
+        style="${b === addBoxSelected ? `border-color:${boxColor(b)};color:${boxColor(b)};background:${boxColor(b)}22` : ''}">
+        Æske ${b}
+      </button>
+    `).join('') +
+    `<button class="box-btn box-btn-new" onclick="selectAddBox(${maxBox+1})">+ Ny æske</button>`;
+}
+
+function selectAddBox(n) {
+  addBoxSelected = n;
+  renderAddBoxButtons();
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  // auto-fill name from filename
+  const nameField = document.getElementById('addName');
+  if (!nameField.value) {
+    let n = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+    n = n.charAt(0).toUpperCase() + n.slice(1);
+    nameField.value = n;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    addImageData = ev.target.result;
+    document.getElementById('uploadArea').innerHTML =
+      `<img src="${addImageData}" alt="preview" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitAdd() {
+  const name = document.getElementById('addName').value.trim();
+  if (!name) return;
+  const newGame = {
+    id: Date.now().toString(),
+    name,
+    imageData: addImageData,
+    boxNumber: addBoxSelected
+  };
+  games.push(newGame);
+  saveData();
+  renderGrid();
+  closeModal('addModal');
+}
+
+// --- MANAGE MODAL ---
+function openManage() {
+  renderManage();
+  openModal('manageModal');
+}
+
+function renderManage() {
+  const boxes = allBoxNumbers();
+  if (boxes.length === 0) {
+    document.getElementById('manageBody').innerHTML =
+      `<div class="empty-state"><div class="icon">📦</div><h3>Ingen spil endnu</h3></div>`;
+    return;
+  }
+  const maxBox = Math.max(...boxes);
+  document.getElementById('manageBody').innerHTML = boxes.map(boxNum => {
+    const col = boxColor(boxNum);
+    const boxGames = games.filter(g => g.boxNumber === boxNum)
+      .sort((a,b) => a.name.localeCompare(b.name,'da'));
+    return `
+      <div class="manage-box-section">
+        <div class="manage-box-header">
+          <div class="box-badge" style="background:${col}">${boxNum}</div>
+          <span class="manage-box-title">Æske ${boxNum}</span>
+          <span class="manage-box-count">(${boxGames.length} spil)</span>
+        </div>
+        ${boxGames.map(g => `
+          <div class="manage-game-row">
+            <div class="manage-game-thumb">
+              ${g.imageData ? `<img src="${g.imageData}" alt="">` : '🎲'}
+            </div>
+            <span class="manage-game-name">${esc(g.name)}</span>
+            <select class="manage-select" onchange="manageMove('${g.id}', this.value)">
+              ${boxes.map(b => `<option value="${b}" ${b===g.boxNumber?'selected':''} style="background:#13131f">Æske ${b}</option>`).join('')}
+              <option value="${maxBox+1}" style="background:#13131f">Ny æske ${maxBox+1}</option>
+            </select>
+            <button class="btn-del" onclick="manageDelete('${g.id}')">✕</button>
+          </div>
+        `).join('')}
+      </div>`;
+  }).join('');
+}
+
+function manageMove(id, newBox) {
+  const g = games.find(x => x.id === id);
+  if (g) { g.boxNumber = Number(newBox); saveData(); renderManage(); renderGrid(); }
+}
+
+function manageDelete(id) {
+  if (!confirm('Slet dette spil?')) return;
+  games = games.filter(g => g.id !== id);
+  saveData(); renderManage(); renderGrid();
+}
+
+// --- MODAL HELPERS ---
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// --- INIT ---
+loadData();
+renderGrid();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
