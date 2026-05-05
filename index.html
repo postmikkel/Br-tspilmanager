@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brætspil">
+<meta name="theme-color" content="#0e0e1a">
+<link rel="manifest" href="manifest.json">
+<title>Brætspil</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0e0e1a;
+  color: #f0f0fa;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+/* ── BOTTOM NAV ── */
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #0e0e1a;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 100;
+}
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; padding: 10px 0 12px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.35);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px; gap: 4px;
+  transition: color 0.15s;
+}
+.nav-tab.on { color: #e8612c; }
+.nav-tab span:first-child { font-size: 22px; }
+
+/* ── PAGES ── */
+.page { display: none; padding-bottom: 70px; min-height: 100dvh; }
+.page.on { display: block; }
+
+/* ── HEADER ── */
+.hdr {
+  padding: 16px 16px 12px;
+  background: rgba(14,14,26,0.97);
+  position: sticky; top: 0; z-index: 10;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.hdr-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hdr h1 { font-size: 22px; font-weight: 800; }
+.hdr-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+/* ── BUTTONS ── */
+.btn {
+  border: none; border-radius: 10px; cursor: pointer;
+  font-weight: 700; font-size: 14px; padding: 10px 16px;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: transform 0.1s, opacity 0.1s;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.95); opacity: 0.8; }
+.btn-orange { background: linear-gradient(135deg, #e8612c, #e8912c); color: #fff; }
+.btn-grey { background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+.btn-block { width: 100%; justify-content: center; margin-top: 12px; }
+
+/* ── SEARCH ── */
+.search {
+  width: 100%; padding: 9px 13px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; color: #f0f0fa;
+  font-size: 15px; font-family: inherit; outline: none;
+}
+.search::placeholder { color: rgba(255,255,255,0.3); }
+
+/* ── GAME GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  gap: 10px; padding: 12px;
+}
+.gcard {
+  border-radius: 11px; overflow: hidden;
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.07);
+  cursor: pointer; transition: transform 0.15s;
+}
+.gcard:active { transform: scale(0.94); }
+.gcard-img {
+  aspect-ratio: 3/4; background: #111;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.gcard-img img { width: 100%; height: 100%; object-fit: cover; }
+.gcard-img .noimg { font-size: 36px; opacity: 0.18; }
+.gcard-name {
+  padding: 6px 8px 8px;
+  font-size: 11px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── BOX LIST ── */
+.blist { padding: 12px; }
+.bitem {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px; border-radius: 12px;
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 8px; cursor: pointer;
+  transition: background 0.15s;
+}
+.bitem:active { background: #222238; }
+.bitem-img {
+  width: 54px; height: 54px; border-radius: 9px;
+  overflow: hidden; background: #111; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.bitem-img img { width: 100%; height: 100%; object-fit: cover; }
+.bitem-info { flex: 1; }
+.bitem-name { font-size: 15px; font-weight: 700; }
+.bitem-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+.bitem-arrow { font-size: 20px; color: rgba(255,255,255,0.2); }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.22); }
+.empty .ei { font-size: 52px; margin-bottom: 14px; }
+.empty h3 { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.3); margin-bottom: 6px; }
+.empty p { font-size: 13px; }
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.87);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.overlay.on { opacity: 1; pointer-events: all; }
+.sheet {
+  background: #16162a; border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 540px;
+  max-height: 90dvh; overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  transform: translateY(20px); transition: transform 0.2s;
+  border: 1px solid rgba(255,255,255,0.08); border-bottom: none;
+}
+.overlay.on .sheet { transform: translateY(0); }
+.drag { width: 36px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 10px auto 0; }
+.mhead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.mhead h2 { font-size: 20px; font-weight: 800; }
+.mhead-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.xbtn {
+  background: rgba(255,255,255,0.08); border: none; color: #fff;
+  width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+  font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.mbody { padding: 16px 18px 20px; }
+
+/* ── UPLOAD AREA ── */
+.uparea {
+  border: 2px dashed rgba(255,255,255,0.12); border-radius: 13px;
+  padding: 28px 20px; text-align: center; cursor: pointer;
+  background: rgba(255,255,255,0.02); margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+.uparea:active { border-color: #e8612c; }
+.uparea .ui { font-size: 38px; margin-bottom: 10px; }
+.uparea .ut { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.55); }
+.uparea .us { font-size: 12px; color: rgba(255,255,255,0.28); margin-top: 4px; }
+
+.imgprev {
+  width: 100%; aspect-ratio: 4/3; border-radius: 12px;
+  overflow: hidden; background: #111; margin-bottom: 14px;
+  cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.imgprev img { width: 100%; height: 100%; object-fit: cover; }
+.imgprev-lbl {
+  position: absolute; bottom: 8px; right: 8px;
+  background: rgba(0,0,0,0.72); border-radius: 7px;
+  padding: 4px 10px; font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600;
+}
+
+.flabel { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.finput {
+  width: 100%; padding: 11px 13px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; color: #f0f0fa; font-size: 15px;
+  font-family: inherit; outline: none; margin-bottom: 14px;
+}
+.finput:focus { border-color: rgba(232,97,44,0.5); }
+
+/* batch */
+.bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px,1fr)); gap: 8px; margin-bottom: 14px; }
+.bgi { position: relative; }
+.bgimg { width:100%; aspect-ratio:1; border-radius:8px; overflow:hidden; background:#111; }
+.bgimg img { width:100%; height:100%; object-fit:cover; }
+.bgname { font-size:9px; color:rgba(255,255,255,0.3); margin-top:3px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bgdel { position:absolute; top:3px; right:3px; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,0.75); border:none; color:#fff; font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* checklist */
+.citem {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 5px; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.citem.sel { background: rgba(232,97,44,0.1); border-color: rgba(232,97,44,0.35); }
+.cbox {
+  width: 20px; height: 20px; border-radius: 5px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 12px; color: #fff;
+  transition: all 0.12s;
+}
+.citem.sel .cbox { background: #e8612c; border-color: #e8612c; }
+.cthumb { width:30px; height:30px; border-radius:6px; overflow:hidden; background:#111; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.cthumb img { width:100%; height:100%; object-fit:cover; }
+.cname { flex:1; font-size:13px; }
+
+/* radio */
+.ritem {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 5px; cursor: pointer;
+}
+.ritem.sel { background: rgba(232,97,44,0.1); border-color: rgba(232,97,44,0.35); }
+.rdot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ritem.sel .rdot::after { content:''; width:10px; height:10px; border-radius:50%; background:#e8612c; display:block; }
+
+/* result image */
+.result-img { width:100%; border-radius:14px; overflow:hidden; background:#111; }
+.result-img img { width:100%; display:block; max-height:70dvh; object-fit:contain; }
+
+@media (min-width:500px) {
+  .overlay { align-items:center; padding:20px; }
+  .sheet { border-radius:20px; border:1px solid rgba(255,255,255,0.08); max-height:88dvh; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE: SPIL -->
+<div class="page on" id="pg-games">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div>
+        <h1>🎲 Spil</h1>
+        <div class="hdr-sub" id="sub-games">0 spil</div>
+      </div>
+      <button class="btn btn-orange" onclick="openAddGame()" style="font-size:13px;padding:8px 13px">+ Tilføj</button>
+    </div>
+    <input class="search" type="search" placeholder="Søg spil…" id="srch-games" oninput="renderGames()">
+  </div>
+  <div id="games-out"></div>
+</div>
+
+<!-- PAGE: ÆSKER -->
+<div class="page" id="pg-boxes">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div>
+        <h1>📦 Æsker</h1>
+        <div class="hdr-sub" id="sub-boxes">0 æsker</div>
+      </div>
+      <button class="btn btn-orange" onclick="openNewBox()" style="font-size:13px;padding:8px 13px">+ Ny æske</button>
+    </div>
+  </div>
+  <div class="blist" id="boxes-out"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-tab on" id="nt-games" onclick="showPage('games')">
+    <span>🎲</span><span>Spil</span>
+  </button>
+  <button class="nav-tab" id="nt-boxes" onclick="showPage('boxes')">
+    <span>📦</span><span>Æsker</span>
+  </button>
+</nav>
+
+<!-- ══ MODAL: TILFØJ SPIL ══ -->
+<div class="overlay" id="m-addgame" onclick="closeModal('m-addgame')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="drag"></div>
+    <div class="mhead">
+      <div><h2>Tilføj spil</h2></div>
+      <button class="xbtn" onclick="closeModal('m-addgame')">✕</button>
+    </div>
+    <div class="mbody">
+      <!-- Single -->
+      <div class="uparea" onclick="document.getElementById('fi-single').click()">
+        <div class="ui">📷</div>
+        <div class="ut">Vælg ét billede</div>
+        <div class="us">Filnavnet bruges som spillets navn</div>
+      </div>
+      <input type="file" id="fi-single" accept="image/*" style="display:none" onchange="onSingle(event)">
+      <div id="single-prev" style="display:none">
+        <div class="imgprev" onclick="document.getElementById('fi-single').click()">
+          <img id="single-img" src="" alt="">
+          <div class="imgprev-lbl">Skift billede</div>
+        </div>
+        <label class="flabel">Spillets navn</label>
+        <input class="finput" type="text" id="single-name" placeholder="f.eks. Catan">
+        <button class="btn btn-orange btn-block" onclick="saveSingle()">Tilføj spil</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+        <span style="font-size:10px;color:rgba(255,255,255,0.28);letter-spacing:1px">ELLER MANGE PÅ ÉN GANG</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+      </div>
+
+      <!-- Batch -->
+      <div class="uparea" onclick="document.getElementById('fi-batch').click()">
+        <div class="ui">🖼️</div>
+        <div class="ut">Vælg flere billeder</div>
+        <div class="us">Filnavnene bliver spillenes navne</div>
+      </div>
+      <input type="file" id="fi-batch" accept="image/*" multiple style="display:none" onchange="onBatch(event)">
+      <div id="batch-prev" style="display:none">
+        <div class="bgrid" id="batch-grid"></div>
+        <button class="btn btn-orange btn-block" onclick="saveBatch()">Tilføj alle spil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SPIL DETALJE – FULLSCREEN ══ -->
+<div id="m-gamedet" onclick="closeModal('m-gamedet')" style="
+  display:none; position:fixed; inset:0; z-index:200;
+  background:#0e0e1a;
+  flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer;
+">
+  <div style="position:absolute;top:0;left:0;right:0;padding:16px 16px 0;pointer-events:none">
+    <div id="gd-name" style="font-size:20px;font-weight:800;text-align:center"></div>
+    <div id="gd-sub" style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;margin-top:4px"></div>
+  </div>
+  <div id="gd-img" style="width:100%;max-width:480px;padding:0 16px"></div>
+  <div id="gd-label" style="text-align:center;font-size:13px;color:rgba(255,255,255,0.35);margin-top:14px;padding:0 20px"></div>
+  <div style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.2)">Tryk hvor som helst for at gå tilbage</div>
+  <button onclick="event.stopPropagation();deleteGame()" style="margin-top:16px;background:rgba(232,44,80,0.12);border:1px solid rgba(232,44,80,0.25);color:#e82c50;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">🗑️ Slet spil</button>
+</div>
+
+<!-- ══ MODAL: NY ÆSKE – TRIN 1 (vælg æskespil) ══ -->
+<div class="overlay" id="m-box1" onclick="closeModal('m-box1')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="drag"></div>
+    <div class="mhead">
+      <div>
+        <h2 id="b1-title">Ny æske</h2>
+        <div class="mhead-sub">Vælg det spil der er æsken</div>
+      </div>
+      <button class="xbtn" onclick="closeModal('m-box1')">✕</button>
+    </div>
+    <div class="mbody">
+      <input class="search" type="search" placeholder="Søg spil…" id="srch-b1" oninput="renderB1()" style="margin-bottom:10px">
+      <div id="b1-list" style="max-height:420px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NY ÆSKE – TRIN 2 (vælg gæstespil) ══ -->
+<div class="overlay" id="m-box2" onclick="closeModal('m-box2')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="drag"></div>
+    <div class="mhead">
+      <div>
+        <h2 id="b2-title">Ny æske</h2>
+        <div class="mhead-sub">Vælg hvilke spil der ligger i æsken</div>
+      </div>
+      <button class="xbtn" onclick="closeModal('m-box2')">✕</button>
+    </div>
+    <div class="mbody">
+      <!-- æske preview -->
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(232,97,44,0.1);border:1px solid rgba(232,97,44,0.3);margin-bottom:14px">
+        <div id="b2-thumb" style="width:42px;height:42px;border-radius:8px;overflow:hidden;background:#111;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px"></div>
+        <div>
+          <div id="b2-boxname" style="font-size:14px;font-weight:700"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35)">er æsken</div>
+        </div>
+      </div>
+      <input class="search" type="search" placeholder="Søg spil…" id="srch-b2" oninput="renderB2()" style="margin-bottom:10px">
+      <div id="b2-list" style="max-height:300px;overflow-y:auto"></div>
+      <button class="btn btn-orange btn-block" onclick="saveBox()">Gem æske</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ÆSKE DETALJE ══ -->
+<div class="overlay" id="m-boxdet" onclick="closeModal('m-boxdet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="drag"></div>
+    <div class="mhead">
+      <div>
+        <h2 id="bd-name"></h2>
+        <div class="mhead-sub" id="bd-sub"></div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn btn-grey" style="font-size:12px;padding:7px 11px" onclick="editBox()">✏️ Rediger</button>
+        <button class="btn" style="font-size:12px;padding:7px 11px;background:rgba(232,44,80,0.12);border:1px solid rgba(232,44,80,0.25);color:#e82c50" onclick="deleteBox()">🗑️ Slet</button>
+        <button class="xbtn" onclick="closeModal('m-boxdet')">✕</button>
+      </div>
+    </div>
+    <div class="mbody" id="bd-body"></div>
+  </div>
+</div>
+
+<script>
+// ══ STATE ══
+let G = []; // games: {id, name, imageData}
+let B = []; // boxes: {id, boxGameId, guestIds:[]}
+let db;
+
+// ══ INDEXEDDB ══
+function initDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('bs2', 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore('kv');
+    r.onsuccess = e => { db = e.target.result; res(); };
+    r.onerror = () => rej();
+  });
+}
+function dbGet(key) {
+  return new Promise(res => {
+    try {
+      const r = db.transaction('kv','readonly').objectStore('kv').get(key);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => res(null);
+    } catch { res(null); }
+  });
+}
+function dbSet(key, val) {
+  try {
+    db.transaction('kv','readwrite').objectStore('kv').put(val, key);
+  } catch(e) { console.error(e); }
+}
+async function load() {
+  await initDB();
+  const s = await dbGet('state');
+  if (s) { G = s.G||[]; B = s.B||[]; }
+}
+function save() { dbSet('state', {G, B}); }
+
+// ══ NAV ══
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(x => x.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.getElementById('nt-'+p).classList.add('on');
+  if (p==='games') renderGames();
+  if (p==='boxes') renderBoxes();
+}
+
+// ══ GAMES ══
+function renderGames() {
+  const q = (document.getElementById('srch-games').value||'').toLowerCase();
+  const list = [...G].filter(g=>g.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
+  document.getElementById('sub-games').textContent = G.length+' spil';
+  const out = document.getElementById('games-out');
+  if (!list.length) {
+    out.innerHTML = `<div class="empty"><div class="ei">🎲</div>
+      <h3>${G.length?'Ingen resultater':'Ingen spil endnu'}</h3>
+      <p>${G.length?'Prøv en anden søgning':'Tryk + Tilføj for at starte'}</p></div>`;
+    return;
+  }
+  out.innerHTML = `<div class="grid">${list.map(g=>`
+    <div class="gcard" onclick="openGameDet('${g.id}')">
+      <div class="gcard-img">${g.imageData?`<img src="${g.imageData}" alt="">`:'<div class="noimg">🎲</div>'}</div>
+      <div class="gcard-name">${esc(g.name)}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ══ GAME DETAIL ══
+function getBoxGame(gameId) {
+  const asBox = B.find(b=>b.boxGameId===gameId);
+  if (asBox) return G.find(g=>g.id===gameId);
+  const asGuest = B.find(b=>b.guestIds.includes(gameId));
+  if (asGuest) return G.find(g=>g.id===asGuest.boxGameId);
+  return null;
+}
+
+function openGameDet(id) {
+  currentGameId = id;
+  const game = G.find(g=>g.id===id); if (!game) return;
+  const boxGame = getBoxGame(id);
+  const isBox = boxGame && boxGame.id===id;
+
+  document.getElementById('gd-name').textContent = game.name;
+
+  if (boxGame) {
+    document.getElementById('gd-sub').textContent = isBox ? 'Dette spil er selv æsken' : `Ligger i ${boxGame.name}-æsken`;
+    document.getElementById('gd-img').innerHTML = boxGame.imageData
+      ? `<div class="result-img"><img src="${boxGame.imageData}" alt=""></div>` : '';
+    document.getElementById('gd-label').textContent = isBox ? '' : `Find æsken med ${boxGame.name} på`;
+  } else {
+    document.getElementById('gd-sub').textContent = 'Ikke tilknyttet en æske endnu';
+    document.getElementById('gd-img').innerHTML =
+      `<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.25);font-size:13px">
+        Gå til Æsker-fanen for at tilknytte dette spil til en æske.
+      </div>`;
+    document.getElementById('gd-label').textContent = '';
+  }
+  openGameDetScreen();
+}
+
+function openGameDetScreen() {
+  const el = document.getElementById('m-gamedet');
+  el.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+// ══ ADD GAME ══
+let singImg = null, batchFiles = [];
+
+function openAddGame() {
+  singImg = null; batchFiles = [];
+  document.getElementById('single-name').value = '';
+  document.getElementById('single-prev').style.display = 'none';
+  document.getElementById('batch-prev').style.display = 'none';
+  document.getElementById('fi-single').value = '';
+  document.getElementById('fi-batch').value = '';
+  openM('m-addgame');
+}
+
+function onSingle(e) {
+  const f = e.target.files[0]; if (!f) return;
+  if (!document.getElementById('single-name').value) {
+    let n = f.name.replace(/\.[^.]+$/,'').replace(/[-_.]/g,' ').trim();
+    document.getElementById('single-name').value = n.charAt(0).toUpperCase()+n.slice(1);
+  }
+  const r = new FileReader();
+  r.onload = ev => {
+    singImg = ev.target.result;
+    document.getElementById('single-img').src = singImg;
+    document.getElementById('single-prev').style.display = 'block';
+    document.getElementById('batch-prev').style.display = 'none';
+  };
+  r.readAsDataURL(f);
+}
+
+function saveSingle() {
+  const name = document.getElementById('single-name').value.trim();
+  if (!name) return;
+  G.push({id:uid(), name, imageData:singImg});
+  save(); renderGames(); closeModal('m-addgame');
+}
+
+function onBatch(e) {
+  const files = [...e.target.files]; if (!files.length) return;
+  batchFiles = [];
+  document.getElementById('single-prev').style.display = 'none';
+  document.getElementById('batch-prev').style.display = 'block';
+  document.getElementById('batch-grid').innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:13px;padding:8px">Indlæser…</div>';
+  let done = 0;
+  files.forEach((f,i)=>{
+    let n = f.name.replace(/\.[^.]+$/,'').replace(/[-_.]/g,' ').trim();
+    n = n.charAt(0).toUpperCase()+n.slice(1);
+    const r = new FileReader();
+    r.onload = ev => {
+      batchFiles.push({name:n, imageData:ev.target.result, i});
+      if (++done===files.length) { batchFiles.sort((a,b)=>a.i-b.i); renderBatch(); }
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function renderBatch() {
+  document.getElementById('batch-grid').innerHTML = batchFiles.map((f,i)=>`
+    <div class="bgi">
+      <div class="bgimg"><img src="${f.imageData}" alt=""></div>
+      <button class="bgdel" onclick="delBatch(${i})">✕</button>
+      <div class="bgname">${esc(f.name)}</div>
+    </div>`).join('');
+}
+
+function delBatch(i) {
+  batchFiles.splice(i,1);
+  if (!batchFiles.length) { document.getElementById('batch-prev').style.display='none'; return; }
+  renderBatch();
+}
+
+function saveBatch() {
+  batchFiles.forEach(f=>G.push({id:uid(), name:f.name, imageData:f.imageData}));
+  save(); renderGames(); closeModal('m-addgame');
+}
+
+// ══ BOXES ══
+function renderBoxes() {
+  document.getElementById('sub-boxes').textContent = B.length+' æsker';
+  const out = document.getElementById('boxes-out');
+  if (!B.length) {
+    out.innerHTML = `<div class="empty"><div class="ei">📦</div>
+      <h3>Ingen æsker endnu</h3><p>Tryk "+ Ny æske" for at oprette din første æske</p></div>`;
+    return;
+  }
+  out.innerHTML = B.map(box=>{
+    const bg = G.find(g=>g.id===box.boxGameId);
+    const total = 1 + box.guestIds.length;
+    return `<div class="bitem" onclick="openBoxDet('${box.id}')">
+      <div class="bitem-img">${bg?.imageData?`<img src="${bg.imageData}" alt="">`:'📦'}</div>
+      <div class="bitem-info">
+        <div class="bitem-name">${esc(bg?.name||'?')}</div>
+        <div class="bitem-sub">${total} spil</div>
+      </div>
+      <div class="bitem-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+
+// ══ NEW BOX ══
+let editId=null, boxGameId=null, guestIds=new Set(), currentGameId=null;
+
+function openNewBox() {
+  editId=null; boxGameId=null; guestIds=new Set();
+  document.getElementById('b1-title').textContent = 'Ny æske';
+  document.getElementById('srch-b1').value = '';
+  renderB1();
+  openM('m-box1');
+}
+
+function renderB1() {
+  const q = (document.getElementById('srch-b1').value||'').toLowerCase();
+  const list = [...G].filter(g=>g.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
+  if (!list.length) {
+    document.getElementById('b1-list').innerHTML =
+      `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px">
+        ${G.length?'Ingen spil fundet':'Tilføj spil under "Spil"-fanen først'}</div>`;
+    return;
+  }
+  document.getElementById('b1-list').innerHTML = list.map(g=>`
+    <div class="ritem ${boxGameId===g.id?'sel':''}" onclick="pickBoxGame('${g.id}')">
+      <div class="rdot"></div>
+      <div class="cthumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
+      <span class="cname">${esc(g.name)}</span>
+    </div>`).join('');
+}
+
+function pickBoxGame(id) {
+  boxGameId = id;
+  guestIds.delete(id);
+  closeModal('m-box1');
+  // setup step 2
+  const bg = G.find(g=>g.id===id);
+  document.getElementById('b2-title').textContent = editId?'Rediger æske':'Ny æske';
+  document.getElementById('b2-boxname').textContent = bg?.name||'';
+  document.getElementById('b2-thumb').innerHTML = bg?.imageData
+    ? `<img src="${bg.imageData}" style="width:100%;height:100%;object-fit:cover">` : '📦';
+  document.getElementById('srch-b2').value = '';
+  renderB2();
+  openM('m-box2');
+}
+
+function renderB2() {
+  const q = (document.getElementById('srch-b2').value||'').toLowerCase();
+  const list = [...G].filter(g=>g.id!==boxGameId && g.name.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
+  if (!list.length) {
+    document.getElementById('b2-list').innerHTML =
+      `<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:13px">Ingen andre spil at vælge</div>`;
+    return;
+  }
+  document.getElementById('b2-list').innerHTML = list.map(g=>{
+    const sel = guestIds.has(g.id);
+    return `<div class="citem ${sel?'sel':''}" onclick="toggleGuest('${g.id}')">
+      <div class="cbox">${sel?'✓':''}</div>
+      <div class="cthumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
+      <span class="cname">${esc(g.name)}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleGuest(id) {
+  guestIds.has(id)?guestIds.delete(id):guestIds.add(id);
+  renderB2();
+}
+
+function saveBox() {
+  if (!boxGameId) return;
+  const guests = [...guestIds];
+  // remove chosen games from other boxes
+  B.forEach(b=>{
+    if (b.id!==editId) b.guestIds = b.guestIds.filter(id=>id!==boxGameId&&!guests.includes(id));
+  });
+  if (editId) {
+    const b = B.find(x=>x.id===editId);
+    if (b) { b.boxGameId=boxGameId; b.guestIds=guests; }
+  } else {
+    B.push({id:uid(), boxGameId, guestIds:guests});
+  }
+  B = B.filter(b=>b.boxGameId);
+  save(); renderBoxes(); closeModal('m-box2');
+}
+
+// ══ BOX DETAIL ══
+function openBoxDet(id) {
+  editId = id;
+  const box = B.find(b=>b.id===id); if (!box) return;
+  const bg = G.find(g=>g.id===box.boxGameId);
+  const all = [box.boxGameId,...box.guestIds].map(id=>G.find(g=>g.id===id)).filter(Boolean)
+    .sort((a,b)=>a.name.localeCompare(b.name,'da'));
+  document.getElementById('bd-name').textContent = bg?.name||'Æske';
+  document.getElementById('bd-sub').textContent = all.length+' spil i æsken';
+  document.getElementById('bd-body').innerHTML =
+    (bg?.imageData?`<div class="result-img" style="margin-bottom:16px"><img src="${bg.imageData}" alt=""></div>`:'') +
+    '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Spil i æsken</div>' +
+    all.map(g=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+        background:${g.id===box.boxGameId?'rgba(232,97,44,0.1)':'rgba(255,255,255,0.03)'};
+        border:1px solid ${g.id===box.boxGameId?'rgba(232,97,44,0.3)':'rgba(255,255,255,0.07)'};margin-bottom:5px">
+        <div class="cthumb">${g.imageData?`<img src="${g.imageData}" alt="">`:'🎲'}</div>
+        <span style="font-size:13px;flex:1;font-weight:${g.id===box.boxGameId?700:400}">${esc(g.name)}</span>
+        ${g.id===box.boxGameId?'<span style="font-size:10px;color:#e8612c">æske</span>':''}
+      </div>`).join('');
+  openM('m-boxdet');
+}
+
+function editBox() {
+  const box = B.find(b=>b.id===editId); if (!box) return;
+  boxGameId = box.boxGameId;
+  guestIds = new Set(box.guestIds);
+  closeModal('m-boxdet');
+  document.getElementById('b1-title').textContent = 'Rediger æske';
+  document.getElementById('srch-b1').value = '';
+  renderB1();
+  openM('m-box1');
+}
+
+// ══ HELPERS ══
+function openM(id) { document.getElementById(id).classList.add('on'); document.body.style.overflow='hidden'; }
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('on');
+  el.style.display='none';
+  document.body.style.overflow='';
+}
+
+function deleteGame() {
+  if (!confirm('Slet "' + (G.find(g=>g.id===currentGameId)?.name||'dette spil') + '"?')) return;
+  // remove from any box
+  B.forEach(b => { b.guestIds = b.guestIds.filter(id=>id!==currentGameId); });
+  B = B.filter(b => b.boxGameId !== currentGameId);
+  G = G.filter(g=>g.id!==currentGameId);
+  save(); renderGames(); closeModal('m-gamedet');
+}
+
+function deleteBox() {
+  const box = B.find(b=>b.id===editId);
+  const name = G.find(g=>g.id===box?.boxGameId)?.name || 'denne æske';
+  if (!confirm('Slet æsken "' + name + '"? Spillene slettes ikke.')) return;
+  B = B.filter(b=>b.id!==editId);
+  save(); renderBoxes(); closeModal('m-boxdet');
+}
+function uid() { return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══ INIT ══
+load().then(()=>renderGames());
+</script>
+</body>
+</html>
